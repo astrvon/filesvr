@@ -1,27 +1,28 @@
 {
-  "name": "filesvr",
-  "version": "1.0.50",
+  "name": "file-server-api",
+  "version": "1.0.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "bun run src/index.ts",
     "dev": "bun run --watch src/index.ts",
-    "migrate": "bun run drizzle-kit generate && bun run drizzle-kit push"
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@elysiajs/cookie": "latest",
     "@elysiajs/cors": "latest",
-    "@elysiajs/jwt": "latest",
+    "@elysiajs/swagger": "latest",
     "bcrypt": "latest",
-    "dotenv": "latest",
     "drizzle-orm": "latest",
     "elysia": "latest",
-    "postgres": "latest",
-    "zod": "latest"
+    "jose": "latest",
+    "pg": "latest",
+    "dotenv": "latest"
   },
   "devDependencies": {
     "@types/bcrypt": "latest",
     "@types/pg": "latest",
+    "@types/node": "latest",
     "bun-types": "latest",
     "drizzle-kit": "latest"
-  },
-  "module": "src/index.js"
+  }
 }

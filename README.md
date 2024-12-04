@@ -1,15 +1,20 @@
-# Elysia with Bun runtime
+# File Server API
 
-## Getting Started
-To get started with this template, simply paste this command into your terminal:
-```bash
-bun create elysia ./elysia-example
-```
+This is a RESTful API for a file server built with Bun, ElysiaJS, Drizzle ORM, PostgreSQL, Zod, and Jose.
 
-## Development
-To start the development server run:
-```bash
-bun run dev
-```
+## Features
 
-Open http://localhost:3000/ with your browser to see the result.
+- User management (register, login, modify)
+- File management (upload, download, delete)
+- Storage usage tracking
+- JWT-based authentication
+- Role-based access control (admin vs regular user)
+
+## Prerequisites
+
+- Bun (latest version)
+- PostgreSQL
+
+## Setup
+
+1. Clone the repository:
