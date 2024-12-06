@@ -1,7 +1,7 @@
-import { writeFile, unlink, stat, readdir } from "fs/promises";
+import { writeFile, unlink, stat } from "fs/promises";
 import { join } from "path";
 
-const UPLOAD_DIR = ".\\filestorage\\";
+const UPLOAD_DIR = ".\\filestorage";
 
 export const uploadFile: (file: File) => Promise<{
   filename: string;
@@ -19,7 +19,7 @@ export const uploadFile: (file: File) => Promise<{
     await writeFile(path, file.stream());
     return { filename, path };
   } catch (err) {
-    throw new Error(err instanceof Error ? err.message : err);
+    throw new Error(err instanceof Error ? err.message : undefined);
   }
 };
 
@@ -29,22 +29,20 @@ export const deleteFile: (path: string) => Promise<void> = async (
   await unlink(path);
 };
 
-export const getStorageUsage: () => Promise<{
-  usagePercentage: number;
-  totalSize: number;
-  totalSpace: number;
-}> = async (): Promise<{
-  usagePercentage: number;
-  totalSize: number;
-  totalSpace: number;
-}> => {
-  const files: string[] = await readdir(UPLOAD_DIR);
-  let totalSize: number = 0;
-  for (const file of files) {
-    const { size } = await stat(join(UPLOAD_DIR, file));
-    totalSize += size;
-  }
-  const totalSpace: number = 10 * 1024 * 1024 * 1024; // 10GB
-  const usagePercentage: number = (totalSize / totalSpace) * 100;
-  return { usagePercentage, totalSize, totalSpace };
+export const getStorageUsage = async () => {
+  const { size, blocks } = await stat(UPLOAD_DIR);
+  const usedSpace: number = blocks * 512; // convert from blocks to bytes
+  const totalSpace: number = size;
+  const usagePercentage: number = (usedSpace / totalSpace) * 100;
+  const freeSpace: number = size * usagePercentage;
+  console.log({
+    stat: await stat(UPLOAD_DIR),
+    size,
+    blocks,
+    usedSpace,
+    totalSpace,
+    usagePercentage,
+    freeSpace,
+  });
+  return { usagePercentage, usedSpace, totalSpace, freeSpace };
 };
