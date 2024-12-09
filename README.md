@@ -24,7 +24,7 @@ This is a RESTful API for a file server built with Bun, ElysiaJS, Drizzle ORM, P
 1. Clone the repository:
 
 ```bash
-git clone https://gitlab.bahanatcw.com/abel.dustin/filesvr.git
+git clone https://github.com/astrvon/filesvr.git
 ```
 
 2. Change directory:
@@ -66,4 +66,4 @@ pm2 start --name filesvr src/index.ts
 
 ---
 
-Maintained by [@abel.dustin](https://gitlab.bahanatcw.com/abel.dustin)
+Maintained by [@astrvon](https://github.com/astrvon)
