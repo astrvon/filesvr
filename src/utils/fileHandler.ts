@@ -1,48 +1,68 @@
-import { writeFile, unlink, stat } from "fs/promises";
+import { writeFile, unlink } from "fs/promises";
 import { join } from "path";
+import { promisify } from "util";
 
-const UPLOAD_DIR = ".\\filestorage";
+const UPLOAD_DIR: string | undefined = Bun.env.UPLOAD_DIR;
 
-export const uploadFile: (file: File) => Promise<{
-  filename: string;
-  path: string;
+const execAsync = promisify(require("child_process").exec);
+
+export const uploadFile: (
+	file: File,
+	category: string,
+) => Promise<{
+	filename: string;
+	path: string;
 }> = async (
-  file: File,
+	file: File,
+	category: string,
 ): Promise<{
-  filename: string;
-  path: string;
+	filename: string;
+	path: string;
 }> => {
-  const filename = `${Date.now()}-${file?.name}`;
-  const path: string = join(UPLOAD_DIR, filename);
+	const filename = `${Date.now()}-${file?.name}`;
+	// biome-ignore lint/style/noNonNullAssertion: <explanation>
+	const path: string = join(UPLOAD_DIR!, category, filename);
 
-  try {
-    await writeFile(path, file.stream());
-    return { filename, path };
-  } catch (err) {
-    throw new Error(err instanceof Error ? err.message : undefined);
-  }
+	try {
+		await writeFile(path, file.stream());
+		return { filename, path };
+	} catch (err) {
+		throw new Error(err instanceof Error ? err.message : undefined);
+	}
 };
 
 export const deleteFile: (path: string) => Promise<void> = async (
-  path: string,
+	path: string,
 ): Promise<void> => {
-  await unlink(path);
+	await unlink(path);
 };
 
-export const getStorageUsage = async () => {
-  const { size, blocks } = await stat(UPLOAD_DIR);
-  const usedSpace: number = blocks * 512; // convert from blocks to bytes
-  const totalSpace: number = size;
-  const usagePercentage: number = (usedSpace / totalSpace) * 100;
-  const freeSpace: number = size * usagePercentage;
-  console.log({
-    stat: await stat(UPLOAD_DIR),
-    size,
-    blocks,
-    usedSpace,
-    totalSpace,
-    usagePercentage,
-    freeSpace,
-  });
-  return { usagePercentage, usedSpace, totalSpace, freeSpace };
+export const getStorageUsage = async (): Promise<{
+	usagePercentage: string | number;
+	totalSpace: number;
+	usedSpace: number;
+	availableSpace: number;
+}> => {
+	try {
+		const { stdout } = await execAsync(`df -B1 ${UPLOAD_DIR}`);
+		// biome-ignore lint/suspicious/noExplicitAny: explicitly defined as any
+		const lines: any = stdout.trim().split("\n");
+
+		const [, info] = lines;
+		const [, totalSpace, usedSpace, availableSpace] = info
+			.split(/\s+/)
+			.map(Number);
+
+		const usagePercentage: number = (usedSpace / totalSpace) * 100;
+
+		return {
+			usagePercentage,
+			totalSpace,
+			usedSpace,
+			availableSpace,
+		};
+	} catch (err) {
+		console.error("Error getting storage usage:", err);
+		throw err;
+	}
 };

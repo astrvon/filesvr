@@ -12,11 +12,11 @@
     "@elysiajs/cors": "latest",
     "@elysiajs/swagger": "latest",
     "bcrypt": "latest",
+    "dotenv": "latest",
     "drizzle-orm": "latest",
     "elysia": "latest",
     "jose": "latest",
-    "pg": "latest",
-    "dotenv": "latest"
+    "pg": "latest"
   },
   "devDependencies": {
     "@types/bcrypt": "latest",
