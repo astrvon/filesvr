@@ -2,10 +2,7 @@ import { Elysia, Context } from "elysia";
 import { verifyToken } from "../utils/jwt";
 import { JWTPayload } from "jose";
 
-export const authMiddleware = async (
-  context: Context,
-): Promise<{ user: JWTPayload }> => {
-  console.log(context.request.headers["authorization"]);
+export const authMiddleware = async (context: Context): Promise<void> => {
   const token: string | undefined =
     context.headers.authorization?.split(" ")[1];
   if (!token) {
@@ -13,7 +10,7 @@ export const authMiddleware = async (
   }
   try {
     const user: JWTPayload = await verifyToken(token);
-    return { user };
+    context.store = { user };
   } catch (err) {
     context.set.status = 401;
     throw new Error("Invalid token");
@@ -21,7 +18,7 @@ export const authMiddleware = async (
 };
 
 export const adminMiddleware = (context: Context): void => {
-  if (!context["user"].data.isAdmin) {
+  if (!context.store.user.isAdmin) {
     context.set.status = 403;
     throw new Error("Admin access required");
   }

@@ -43,6 +43,79 @@ export const userRoutes = new Elysia({ prefix: "/users" })
         tags: ["User"],
         summary: "Register User",
         description: "To register a new user",
+        responses: {
+          "200": {
+            description: "Successful Response",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    message: { type: "string" },
+                    user: {
+                      type: "object",
+                      properties: {
+                        id: { type: "string" },
+                        name: { type: "string" },
+                        username: { type: "string" },
+                        email: { type: "string" },
+                        password: { type: "string" },
+                        isAdmin: { type: "boolean" },
+                        createdAt: { type: "string" },
+                        modifiedAt: { type: "string" },
+                      },
+                    },
+                  },
+                },
+                example: {
+                  message: "User registered successfully",
+                  user: {
+                    id: "9afd7cae-f066-4958-9209-ddcb16642c70",
+                    name: "Admin",
+                    username: "admin",
+                    email: "admin@lahelu.com",
+                    password: "top_secret",
+                    isAdmin: false,
+                    createdAt: "2024-12-06T10:13:38.349Z",
+                    modifiedAt: "2024-12-06T10:13:38.349Z",
+                  },
+                },
+              },
+            },
+          },
+          "400": {
+            description: "Bad Request Response",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    code: { type: "number" },
+                    message: { type: "string" },
+                  },
+                },
+                examples: {
+                  usernameDuplicate: {
+                    summary: "User username duplicate",
+                    value: {
+                      code: 400,
+                      message:
+                        'duplicate key value violates unique constraint "users_username_unique"',
+                    },
+                  },
+                  emailDuplicate: {
+                    summary: "User email duplicate",
+                    value: {
+                      code: 400,
+                      message:
+                        'duplicate key value violates unique constraint "users_email_unique"',
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
   )
@@ -87,6 +160,55 @@ export const userRoutes = new Elysia({ prefix: "/users" })
         tags: ["User"],
         summary: "Login User",
         description: "To login with existing user",
+        responses: {
+          "200": {
+            description: "Successful Response",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    id: { type: "string" },
+                    name: { type: "string" },
+                    username: { type: "string" },
+                    email: { type: "string" },
+                    token: { type: "string" },
+                  },
+                },
+                example: {
+                  id: "9972ad30-8bb8-4628-ab2c-bc8fd3a7cf94",
+                  name: "admin",
+                  username: "admin",
+                  email: "admin@lahelu.com",
+                  token: "jwt_token",
+                },
+              },
+            },
+          },
+          "400": {
+            description: "Bad Request Response",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    code: { type: "number" },
+                    message: { type: "string" },
+                  },
+                },
+                examples: {
+                  invalidCredentials: {
+                    summary: "Password/Username Invalid",
+                    value: {
+                      code: 400,
+                      message: "Invalid credentials",
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
   )
